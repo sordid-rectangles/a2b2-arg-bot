@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"os/signal"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
@@ -16,9 +18,22 @@ var dg *discordgo.Session
 var TOKEN string
 var GUILDID string
 
+var motivations = []string{
+	"you can do it champ!",
+	"I believe in you my child",
+	"Tomorrow will be a better day!",
+	"I love you, you are safe here",
+	"Keep trying, I'm sure you've almost got it!",
+	"Keep up the good work kid!",
+}
+
+var cmdStrings map[string]string = map[string]string{
+	"testcmd": "Return String",
+}
+
 func init() {
 	// Print out a fancy logo!
-	fmt.Printf(`Science Defender! %-16s\/`+"\n\n", Version)
+	fmt.Printf(`arg-bot! %-16s\/`+"\n\n", Version)
 
 	//Load dotenv file from .
 	err := godotenv.Load()
@@ -42,25 +57,39 @@ func init() {
 var (
 	commands = []*discordgo.ApplicationCommand{
 		{
-			Name:        "whoami",
-			Description: "Returns information about the user who called the command",
-		},
-		{
-			Name:        "chan",
-			Description: "Returns information about the channel the command is called in",
-		},
-		{
-			Name:        "serv",
-			Description: "Returns information about the server the command is called in",
-		},
-		{
-			Name:        "user-info",
-			Description: "Returns information about the specified user",
+			Name:        "easymode",
+			Description: "bot@a2b2.org:~/$ easymode",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
-					Type:        discordgo.ApplicationCommandOptionUser,
-					Name:        "user-select",
-					Description: "select a user to register",
+					Type:        discordgo.ApplicationCommandOptionBoolean,
+					Name:        "activate",
+					Description: "TRUE/FALSE",
+					Required:    true,
+				},
+			},
+		},
+		{
+			Name:        "catchup",
+			Description: "bot@a2b2.org:~/$ catchup",
+		},
+		{
+			Name:        "motivation-simulator",
+			Description: "bot@a2b2.org:~/$ motivate",
+		},
+		{
+			Name:        "run",
+			Description: "bot@a2b2.org:~/$ run <flags>",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionBoolean,
+					Name:        "activate",
+					Description: "TRUE/FALSE",
+					Required:    true,
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "flags",
+					Description: "<cmdstring>",
 					Required:    true,
 				},
 			},
@@ -68,60 +97,119 @@ var (
 	}
 
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-		"whoami": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			id := i.Member.User.ID
-			nick := i.Member.Nick
-			name := i.Member.User.Username
-			join := i.Member.JoinedAt
+		"easymode": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			var content string
 
-			content := `Your discord user id is: %s
-			Your Nick is: %s
-			Your Username is: %s
-			You joined this server: %s`
+			check, err := comesFromDM(s, i)
+			if err != nil {
+				log.Printf("Error checking if interaction is DM: %s \n", err)
+				return
+			}
+			err = handleDmCheck(s, i, check)
+
+			activate := i.ApplicationCommandData().Options[0].BoolValue()
+
+			if activate {
+				content = "bot@a2b2.org:~/$ easymode activate: true"
+			} else {
+				content = "bot@a2b2.org:~/$ easymode activate: false"
+			}
+
 			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
-					Content: fmt.Sprintf(content, id, nick, name, join),
+					Content: fmt.Sprintf(content),
 				},
 			})
 		},
-		"chan": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			id := i.Message.ChannelID
+		"catchup": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			var content string
 
-			content := `Channel discord id is: %s`
+			check, err := comesFromDM(s, i)
+			if err != nil {
+				log.Printf("Error checking if interaction is DM: %s \n", err)
+				return
+			}
+			err = handleDmCheck(s, i, check)
+
+			msgEmbed := &discordgo.MessageEmbed{
+				Author:      &discordgo.MessageEmbedAuthor{},
+				Color:       0xfff200,
+				Description: "> Serving catchup.json",
+				Fields: []*discordgo.MessageEmbedField{
+					&discordgo.MessageEmbedField{
+						Name:   "PHASE ONE",
+						Value:  "Unnassuming USB Keys were sold to the masses of fans at Night of Fire 2 in LA and New York",
+						Inline: true,
+					},
+					&discordgo.MessageEmbedField{
+						Name:   "PHASE TWO",
+						Value:  "sampletext",
+						Inline: true,
+					},
+				},
+				Image: &discordgo.MessageEmbedImage{
+					URL: "https://cdn.discordapp.com/avatars/119249192806776836/cc32c5c3ee602e1fe252f9f595f9010e.jpg?size=2048",
+				},
+				Thumbnail: &discordgo.MessageEmbedThumbnail{
+					URL: "https://cdn.discordapp.com/avatars/119249192806776836/cc32c5c3ee602e1fe252f9f595f9010e.jpg?size=2048",
+				},
+				Timestamp: time.Now().Format(time.RFC3339),
+				Title:     "bot@a2b2.org:~/$ catchup",
+			}
+
+			var msgEmbed_array []*discordgo.MessageEmbed = []*discordgo.MessageEmbed{msgEmbed}
+
 			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
-					Content: fmt.Sprintf(content, id),
+					Content: fmt.Sprintf(content),
+					Embeds:  msgEmbed_array,
+				},
+			})
+
+		},
+		"motivation-simulator": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			var content string
+
+			check, err := comesFromDM(s, i)
+			if err != nil {
+				log.Printf("Error checking if interaction is DM: %s \n", err)
+				return
+			}
+			err = handleDmCheck(s, i, check)
+
+			content = motivate()
+
+			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: fmt.Sprintf(content),
 				},
 			})
 		},
-		"serv": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			id := i.GuildID
-			locale := i.GuildLocale
+		"run": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			var content string
 
-			content := `Guild discord id is: %s
-			Guild locale is: %s`
+			check, err := comesFromDM(s, i)
+			if err != nil {
+				log.Printf("Error checking if interaction is DM: %s \n", err)
+				return
+			}
+			err = handleDmCheck(s, i, check)
+
+			mode := i.ApplicationCommandData().Options[0].BoolValue()
+			command := i.ApplicationCommandData().Options[1].StringValue()
+			if mode {
+				content = checkCMD(command)
+			} else {
+				content = "bot@a2b2.org:~/$ run activate: false"
+			}
+
 			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
-					Content: fmt.Sprintf(content, id, locale),
-				},
-			})
-		},
-		"user-info": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			user := i.ApplicationCommandData().Options[0].UserValue(s)
-			id := user.ID
-			name := user.Username
-			str := user.String()
-
-			content := `User discord id is: %s
-			User Username is: %s
-			User str is: %s`
-			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-				Type: discordgo.InteractionResponseChannelMessageWithSource,
-				Data: &discordgo.InteractionResponseData{
-					Content: fmt.Sprintf(content, id, name, str),
+					Content: fmt.Sprintf(content),
 				},
 			})
 		},
@@ -178,4 +266,52 @@ func main() {
 
 	// Exit Normally.
 	//exit
+}
+
+//Helper funcs
+
+func comesFromDM(s *discordgo.Session, i *discordgo.InteractionCreate) (bool, error) {
+	channel, err := s.State.Channel(i.ChannelID)
+	if err != nil {
+		if channel, err = s.Channel(i.ChannelID); err != nil {
+			return false, err
+		}
+	}
+
+	return channel.Type == discordgo.ChannelTypeDM, nil
+}
+
+func handleDmCheck(s *discordgo.Session, i *discordgo.InteractionCreate, dm bool) error {
+	var err error
+	if dm {
+		log.Println("Message in dm")
+		var content = "I can only be used in servers ;-("
+
+		err = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Content: fmt.Sprintf(content),
+			},
+		})
+		return err
+	}
+	return nil
+}
+
+func motivate() string {
+	rand.Seed(time.Now().UnixNano())
+	l := len(motivations)
+	i := rand.Intn(l)
+	return motivations[i]
+
+}
+
+func checkCMD(cmd string) string {
+	msg, ok := cmdStrings[cmd]
+	if ok {
+		return msg
+	}
+
+	return `error: {"type":"invalid_CMD"}`
+
 }
