@@ -31,6 +31,42 @@ var cmdStrings map[string]string = map[string]string{
 	"testcmd": "Return String",
 }
 
+var msgEmbed = &discordgo.MessageEmbed{
+	Author:      &discordgo.MessageEmbedAuthor{},
+	Color:       0xfff200,
+	Description: "> Serving catchup.json",
+	Fields: []*discordgo.MessageEmbedField{
+		{
+			Name:   "PHASE ONE",
+			Value:  "Unnassuming USB Keys were sold to the masses of fans at Night of Fire 2 in LA and New York",
+			Inline: false,
+		},
+		{
+			Name:   "PHASE TWO",
+			Value:  "usb keys turn out to have files on them, some of which are unreleased music, some are a bit cryptic",
+			Inline: false,
+		},
+		{
+			Name:   "PHASE THREE",
+			Value:  "people discover fragmented rar",
+			Inline: false,
+		},
+		{
+			Name:   "PHASE FOUR",
+			Value:  "people discover steganography",
+			Inline: false,
+		},
+	},
+	Image: &discordgo.MessageEmbedImage{
+		URL: "https://cdn.discordapp.com/attachments/945144841908662332/945510431072612413/a2b2_green_logo_a2b2green2.png",
+	},
+	Thumbnail: &discordgo.MessageEmbedThumbnail{
+		URL: "https://cdn.discordapp.com/attachments/945144841908662332/945510431072612413/a2b2_green_logo_a2b2green2.png",
+	},
+	Timestamp: time.Now().Format(time.RFC3339),
+	Title:     "bot@a2b2.org:~/$ catchup",
+}
+
 func init() {
 	// Print out a fancy logo!
 	fmt.Printf(`arg-bot! %-16s\/`+"\n\n", Version)
@@ -131,32 +167,6 @@ var (
 				return
 			}
 			err = handleDmCheck(s, i, check)
-
-			msgEmbed := &discordgo.MessageEmbed{
-				Author:      &discordgo.MessageEmbedAuthor{},
-				Color:       0xfff200,
-				Description: "> Serving catchup.json",
-				Fields: []*discordgo.MessageEmbedField{
-					&discordgo.MessageEmbedField{
-						Name:   "PHASE ONE",
-						Value:  "Unnassuming USB Keys were sold to the masses of fans at Night of Fire 2 in LA and New York",
-						Inline: true,
-					},
-					&discordgo.MessageEmbedField{
-						Name:   "PHASE TWO",
-						Value:  "sampletext",
-						Inline: true,
-					},
-				},
-				Image: &discordgo.MessageEmbedImage{
-					URL: "https://cdn.discordapp.com/avatars/119249192806776836/cc32c5c3ee602e1fe252f9f595f9010e.jpg?size=2048",
-				},
-				Thumbnail: &discordgo.MessageEmbedThumbnail{
-					URL: "https://cdn.discordapp.com/avatars/119249192806776836/cc32c5c3ee602e1fe252f9f595f9010e.jpg?size=2048",
-				},
-				Timestamp: time.Now().Format(time.RFC3339),
-				Title:     "bot@a2b2.org:~/$ catchup",
-			}
 
 			var msgEmbed_array []*discordgo.MessageEmbed = []*discordgo.MessageEmbed{msgEmbed}
 

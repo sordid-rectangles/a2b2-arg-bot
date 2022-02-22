@@ -7,3 +7,5 @@ This bot looks for a BOT_TOKEN env variable that can be loaded from a .env file 
 .env file sample:
 BOT_TOKEN: yourtokenhere
 GUILD_ID: yourguildidhere_onlyifyoureallywantthough
+
+https://discord.com/api/oauth2/authorize?client_id=945536456464670762&permissions=311455632960&scope=bot%20applications.commands
