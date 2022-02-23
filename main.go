@@ -12,23 +12,23 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const Version = "v0.0.1-alpha"
+const Version = "v0.0.2-alpha"
 
 var dg *discordgo.Session
 var TOKEN string
 var GUILDID string
 
 var motivations = []string{
-	"you can do it champ!",
-	"I believe in you my child",
-	"Tomorrow will be a better day!",
-	"I love you, you are safe here",
-	"Keep trying, I'm sure you've almost got it!",
-	"Keep up the good work kid!",
+	"`You can do it champ!`",
+	"`I believe in you my child`",
+	"`Tomorrow will be a better day!`",
+	"`I love you, you are safe here`",
+	"`Keep trying, I'm sure you've almost got it!`",
+	"`Keep up the good work kid!`",
 }
 
 var cmdStrings map[string]string = map[string]string{
-	"testcmd": "Return String",
+	"observer": "return link",
 }
 
 var msgEmbed = &discordgo.MessageEmbed{
@@ -38,33 +38,57 @@ var msgEmbed = &discordgo.MessageEmbed{
 	Fields: []*discordgo.MessageEmbedField{
 		{
 			Name:   "PHASE ONE",
-			Value:  "Unnassuming USB Keys were sold to the masses of fans at Night of Fire 2 in LA and New York",
+			Value:  "Unnassuming a2b2 branded USB Keys were sold to the masses of fans at Night of Fire 2 in LA and New York",
 			Inline: false,
 		},
 		{
 			Name:   "PHASE TWO",
-			Value:  "usb keys turn out to have files on them, some of which are unreleased music, some are a bit cryptic",
+			Value:  "The usb keys turned out to have files on them, some of which are unreleased music, some were a bit cryptic",
 			Inline: false,
 		},
 		{
 			Name:   "PHASE THREE",
-			Value:  "people discover fragmented rar",
+			Value:  "People discovered a fragmented rar, and tracked down and assembled the pieces to decompress it",
 			Inline: false,
 		},
 		{
 			Name:   "PHASE FOUR",
-			Value:  "people discover steganography",
+			Value:  "asdfasdfa",
 			Inline: false,
 		},
 	},
-	Image: &discordgo.MessageEmbedImage{
-		URL: "https://cdn.discordapp.com/attachments/945144841908662332/945510431072612413/a2b2_green_logo_a2b2green2.png",
-	},
 	Thumbnail: &discordgo.MessageEmbedThumbnail{
-		URL: "https://cdn.discordapp.com/attachments/945144841908662332/945510431072612413/a2b2_green_logo_a2b2green2.png",
+		URL:    "https://cdn.discordapp.com/attachments/920884723138584599/946153967258312764/a2b2.1.gif",
+		Width:  200,
+		Height: 200,
 	},
 	Timestamp: time.Now().Format(time.RFC3339),
 	Title:     "bot@a2b2.org:~/$ catchup",
+}
+
+var videoEmbed = &discordgo.MessageEmbed{
+	Author:      &discordgo.MessageEmbedAuthor{},
+	Color:       0xfff200,
+	Description: "> Serving euclid.exe",
+	Fields: []*discordgo.MessageEmbedField{
+		{
+			Name:   "bot@a2b2.org:~/$ easymode",
+			Value:  "https://youtu.be/1AgZbGT7YZc",
+			Inline: false,
+		},
+	},
+	Video: &discordgo.MessageEmbedVideo{
+		URL:    "https://youtu.be/1AgZbGT7YZc",
+		Width:  300,
+		Height: 300,
+	},
+	Image: &discordgo.MessageEmbedImage{
+		URL:    "https://cdn.discordapp.com/attachments/920884723138584599/946153967258312764/a2b2.1.gif",
+		Width:  200,
+		Height: 200,
+	},
+	Timestamp: time.Now().Format(time.RFC3339),
+	Title:     "bot@a2b2.org:~/$ easymode true",
 }
 
 func init() {
@@ -145,16 +169,20 @@ var (
 
 			activate := i.ApplicationCommandData().Options[0].BoolValue()
 
+			var vidEmbed_array []*discordgo.MessageEmbed
 			if activate {
-				content = "bot@a2b2.org:~/$ easymode activate: true"
+				content = "`bot@a2b2.org:~/$ easymode activate: true`"
+				vidEmbed_array = []*discordgo.MessageEmbed{videoEmbed}
 			} else {
-				content = "bot@a2b2.org:~/$ easymode activate: false"
+				content = "`bot@a2b2.org:~/$ easymode activate: false`"
+				// vidEmbed_array = []*discordgo.MessageEmbed{videoEmbed}
 			}
 
 			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
 					Content: fmt.Sprintf(content),
+					Embeds:  vidEmbed_array,
 				},
 			})
 		},
@@ -213,7 +241,7 @@ var (
 			if mode {
 				content = checkCMD(command)
 			} else {
-				content = "bot@a2b2.org:~/$ run activate: false"
+				content = "`bot@a2b2.org:~/$ run activate: false`"
 			}
 
 			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
@@ -322,6 +350,6 @@ func checkCMD(cmd string) string {
 		return msg
 	}
 
-	return `error: {"type":"invalid_CMD"}`
+	return "`error: {type:invalid_CMD}`"
 
 }
