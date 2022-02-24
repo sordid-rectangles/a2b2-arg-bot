@@ -28,7 +28,7 @@ var motivations = []string{
 }
 
 var cmdStrings map[string]string = map[string]string{
-	"observer": "return link",
+	"observer": "confirm",
 }
 
 var msgEmbed = &discordgo.MessageEmbed{
@@ -38,22 +38,17 @@ var msgEmbed = &discordgo.MessageEmbed{
 	Fields: []*discordgo.MessageEmbedField{
 		{
 			Name:   "PHASE ONE",
-			Value:  "Unnassuming a2b2 branded USB Keys were sold to the masses of fans at Night of Fire 2 in LA and New York",
+			Value:  "- Unnassuming a2b2 branded USB Keys were sold to the masses of fans at Night of Fire 2 in LA and New York. \n- The usb keys turned out to have files on them, some of which are unreleased music, some were a bit cryptic.\n- People discovered a fragmented rar, and tracked down and assembled the pieces to decompress it.\n- The rar contained a congratulatory video, and a link to a mysterious website.",
 			Inline: false,
 		},
 		{
 			Name:   "PHASE TWO",
-			Value:  "The usb keys turned out to have files on them, some of which are unreleased music, some were a bit cryptic",
+			Value:  "- The website was periodically updated with codes hidden in varied media formats, including various forms of steganography, and SSTV encoding.\n- The end goal was to find a set of key-codes to open up \"the portal\"\n- Some of the content hidden on the website, lead to an interactive livestream event in which further codes were hidden\n- At the end of phase 2, the site was wiped and a videogame was uploaded that contained fragments of the final portal key. Participants failed miserably to decipher this masterpiece, and as such, phase 3 CODENAME: EASYMODE was developed.",
 			Inline: false,
 		},
 		{
 			Name:   "PHASE THREE",
-			Value:  "People discovered a fragmented rar, and tracked down and assembled the pieces to decompress it",
-			Inline: false,
-		},
-		{
-			Name:   "PHASE FOUR",
-			Value:  "asdfasdfa",
+			Value:  "Welcome to EASYMODE :)",
 			Inline: false,
 		},
 	},
@@ -73,12 +68,12 @@ var videoEmbed = &discordgo.MessageEmbed{
 	Fields: []*discordgo.MessageEmbedField{
 		{
 			Name:   "bot@a2b2.org:~/$ easymode",
-			Value:  "https://youtu.be/1AgZbGT7YZc",
+			Value:  "https://youtu.be/7VbMtMsUQzw",
 			Inline: false,
 		},
 	},
 	Video: &discordgo.MessageEmbedVideo{
-		URL:    "https://youtu.be/1AgZbGT7YZc",
+		URL:    "https://youtu.be/7VbMtMsUQzw",
 		Width:  300,
 		Height: 300,
 	},
@@ -89,6 +84,19 @@ var videoEmbed = &discordgo.MessageEmbed{
 	},
 	Timestamp: time.Now().Format(time.RFC3339),
 	Title:     "bot@a2b2.org:~/$ easymode true",
+}
+
+var runEmbed = &discordgo.MessageEmbed{
+	Author:      &discordgo.MessageEmbedAuthor{},
+	Color:       0xfff200,
+	Description: "`> Serving geometry.json`",
+	Image: &discordgo.MessageEmbedImage{
+		URL:    "https://cdn.discordapp.com/attachments/920884723138584599/946193564226953226/regarding_geometry.png",
+		Width:  300,
+		Height: 300,
+	},
+	Timestamp: time.Now().Format(time.RFC3339),
+	Title:     "bot@a2b2.org:~/$ run true observer",
 }
 
 func init() {
@@ -238,8 +246,15 @@ var (
 
 			mode := i.ApplicationCommandData().Options[0].BoolValue()
 			command := i.ApplicationCommandData().Options[1].StringValue()
+
+			var msgEmbed_array []*discordgo.MessageEmbed
 			if mode {
-				content = checkCMD(command)
+				if checkCMD(command) == "confirm" {
+					msgEmbed_array = []*discordgo.MessageEmbed{runEmbed}
+				} else {
+					content = "`bot@a2b2.org:~/$ run activate: fail`"
+				}
+
 			} else {
 				content = "`bot@a2b2.org:~/$ run activate: false`"
 			}
@@ -248,6 +263,7 @@ var (
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
 					Content: fmt.Sprintf(content),
+					Embeds:  msgEmbed_array,
 				},
 			})
 		},
