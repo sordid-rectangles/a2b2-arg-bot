@@ -55,6 +55,11 @@ var msgEmbed = &discordgo.MessageEmbed{
 			Value:  "Welcome to EASYMODE :)",
 			Inline: false,
 		},
+		{
+			Name:   "END?",
+			Value:  "Easymode contained a link to a cryptic reading of a john dee work, with a codephrase midaway. The codephrase when untered into the bot returned an image file, which had a metadatatag with a link to the 2 deaths grips remixes Andy dropped at NOF2. Angel Room remains unsolved, and any intrepid souls who whish to continue may do so at their own initiative : ).\nThanks for playing along?",
+			Inline: false,
+		},
 	},
 	Thumbnail: &discordgo.MessageEmbedThumbnail{
 		URL:    "https://cdn.discordapp.com/attachments/920884723138584599/946153967258312764/a2b2.1.gif",
