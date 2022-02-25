@@ -1,4 +1,4 @@
-module github.com/sordid-rectangles/dev-tools-bot
+module github.com/sordid-rectangles/a2b2-arg-bot
 
 go 1.17
 

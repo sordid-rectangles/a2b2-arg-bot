@@ -18,6 +18,10 @@ var dg *discordgo.Session
 var TOKEN string
 var GUILDID string
 
+var timerExp = time.Date(2022, 3, 1, 17, 0, 0, 0, time.UTC)
+
+var link = "https://www.youtube.com/watch?v=kpnwMgV9HeI"
+
 var motivations = []string{
 	"`You can do it champ!`",
 	"`I believe in you my child`",
@@ -99,6 +103,26 @@ var runEmbed = &discordgo.MessageEmbed{
 	Title:     "bot@a2b2.org:~/$ run true observer",
 }
 
+var timerEmbed = &discordgo.MessageEmbed{
+	Author:      &discordgo.MessageEmbedAuthor{},
+	Color:       0xfff200,
+	Description: "`> Serving timer.json`",
+	Fields: []*discordgo.MessageEmbedField{
+		{
+			Name:   "`Timer`",
+			Value:  fmt.Sprintf("`Timer expires: %s`", timerExp),
+			Inline: false,
+		},
+	},
+	Thumbnail: &discordgo.MessageEmbedThumbnail{
+		URL:    "https://cdn.discordapp.com/attachments/920884723138584599/946153967258312764/a2b2.1.gif",
+		Width:  200,
+		Height: 200,
+	},
+	Timestamp: time.Now().Format(time.RFC3339),
+	Title:     "bot@a2b2.org:~/$ timer",
+}
+
 func init() {
 	// Print out a fancy logo!
 	fmt.Printf(`arg-bot! %-16s\/`+"\n\n", Version)
@@ -161,6 +185,14 @@ var (
 					Required:    true,
 				},
 			},
+		},
+		{
+			Name:        "timer",
+			Description: "bot@a2b2.org:~/$ timer",
+		},
+		{
+			Name:        "nightcore",
+			Description: "bot@a2b2.org:~/$ nightcore",
 		},
 	}
 
@@ -264,6 +296,46 @@ var (
 				Data: &discordgo.InteractionResponseData{
 					Content: fmt.Sprintf(content),
 					Embeds:  msgEmbed_array,
+				},
+			})
+		},
+		"timer": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			var content string
+
+			check, err := comesFromDM(s, i)
+			if err != nil {
+				log.Printf("Error checking if interaction is DM: %s \n", err)
+				return
+			}
+			err = handleDmCheck(s, i, check)
+
+			var msgEmbed_array []*discordgo.MessageEmbed = []*discordgo.MessageEmbed{timerEmbed}
+
+			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: fmt.Sprintf(content),
+					Embeds:  msgEmbed_array,
+				},
+			})
+
+		},
+		"nightcore": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			var content string
+
+			check, err := comesFromDM(s, i)
+			if err != nil {
+				log.Printf("Error checking if interaction is DM: %s \n", err)
+				return
+			}
+			err = handleDmCheck(s, i, check)
+
+			content = fmt.Sprintf("@everyone %s", link)
+
+			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: fmt.Sprintf(content),
 				},
 			})
 		},
