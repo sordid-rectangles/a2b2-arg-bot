@@ -326,7 +326,7 @@ var (
 
 		},
 		"nightcore": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			var content string
+			//var content string
 
 			check, err := comesFromDM(s, i)
 			if err != nil {
@@ -335,14 +335,14 @@ var (
 			}
 			err = handleDmCheck(s, i, check)
 
-			content = fmt.Sprintf("@everyone %s", link)
+			//content = fmt.Sprintf("@everyone %s", link)
 
-			_, err = s.ChannelMessageSend(i.ChannelID, content)
+			//_, err = s.ChannelMessageSend(i.ChannelID, content)
 
 			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
-					Content: fmt.Sprintf("NIGHTCORE!"),
+					Content: fmt.Sprintf("NIGHTCORE! %s", link),
 				},
 			})
 		},
