@@ -57,7 +57,7 @@ var msgEmbed = &discordgo.MessageEmbed{
 		},
 		{
 			Name:   "END?",
-			Value:  "Easymode contained a link to a cryptic reading of a john dee work, with a codephrase midaway. The codephrase when untered into the bot returned an image file, which had a metadatatag with a link to the 2 deaths grips remixes Andy dropped at NOF2. Angel Room remains unsolved, and any intrepid souls who whish to continue may do so at their own initiative : ).\nThanks for playing along?",
+			Value:  "Easymode contained a link to a cryptic reading of a john dee work, with a codephrase midaway. The codephrase when entered into the bot returned an image file, which had a metadata tag with a link to the 2 deaths grips remixes Andy dropped at NOF2. Angel Room remains unsolved, and any intrepid souls who wish to continue may do so at their own initiative : ).\nThanks for playing along?",
 			Inline: false,
 		},
 	},
