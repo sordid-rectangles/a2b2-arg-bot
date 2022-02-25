@@ -95,7 +95,7 @@ var runEmbed = &discordgo.MessageEmbed{
 	Color:       0xfff200,
 	Description: "`> Serving geometry.json`",
 	Image: &discordgo.MessageEmbedImage{
-		URL:    "https://cdn.discordapp.com/attachments/920884723138584599/946193564226953226/regarding_geometry.png",
+		URL:    "https://cdn.discordapp.com/attachments/920884723138584599/946863634229911572/regarding_geometry.png",
 		Width:  300,
 		Height: 300,
 	},
