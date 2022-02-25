@@ -332,10 +332,12 @@ var (
 
 			content = fmt.Sprintf("@everyone %s", link)
 
+			_, err = s.ChannelMessageSend(i.ChannelID, content)
+
 			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
-					Content: fmt.Sprintf(content),
+					Content: fmt.Sprintf("NIGHTCORE!"),
 				},
 			})
 		},
